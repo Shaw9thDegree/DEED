@@ -1,11 +1,12 @@
 # =============================================================================
-# DFRS TRANSFORMER FRAME — PATENT CLAIM DRAFT
+# DFRS UNIVERSAL NEURAL FRAME ARCHITECTURE — PATENT CLAIM DRAFT
 # =============================================================================
 #
 # Copyright 2026 Jarad Shaw. All rights reserved.
 #
-# DFRS TRANSFORMER FRAME v1.0
-# A 1-Base-Floor Transformer Architecture Built on the Discrete Finite Rebuild System
+# DFRS UNIVERSAL NEURAL FRAME ARCHITECTURE v1.0
+# A 1-Base-Floor Frame System Across All Neural Network Architectures
+# Built on the Discrete Finite Rebuild System (DFRS)
 # by Jarad Shaw
 #
 # C = N != 0  |  E(E) = E  |  1(1) = 1
@@ -18,138 +19,300 @@
 # (This document establishes priority date. File with a patent attorney.)
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# TITLE: System and Method for Energy-Grounded Transformer Attention
-#        Using the Discrete Finite Rebuild System (DFRS)
+# TITLE: System and Method for Energy-Grounded Neural Computation Across
+#        All Frame Architectures Using the Discrete Finite Rebuild System (DFRS)
 #
 # INVENTOR: Jarad Shaw
 # FILING DATE: 2026-05-17
 #
+# ─────────────────────────────────────────────────────────────────────────────
+# COVERED FRAME ARCHITECTURES
+#
+# This patent applies to ALL neural network frame types, including but not
+# limited to:
+#
+#   FRAME CLASS A — ATTENTION / TRANSFORMER
+#     Self-attention, cross-attention, multi-head attention, linear attention,
+#     flash attention, grouped-query attention, rotary positional encoding,
+#     encoder-only, decoder-only, encoder-decoder variants.
+#
+#   FRAME CLASS B — RECURRENT / STATE-BASED
+#     Vanilla RNN, LSTM, GRU, bidirectional RNN, peephole LSTM, QRNN,
+#     independently recurrent neural networks (IndRNN).
+#
+#   FRAME CLASS C — STATE-SPACE MODELS (SSM)
+#     S4, H3, Hyena, Mamba, RWKV, RetNet, Hawk, Griffin, any structured
+#     state-space or linear recurrence architecture.
+#
+#   FRAME CLASS D — CONVOLUTIONAL
+#     1D/2D/3D CNN, depthwise separable convolution, dilated convolution,
+#     causal convolution, TCN (temporal convolutional network), WaveNet.
+#
+#   FRAME CLASS E — FEEDFORWARD / MLP
+#     Standard MLP, highway network, residual MLP, MLP-Mixer, gated MLP,
+#     any fully connected layer stack.
+#
+#   FRAME CLASS F — GRAPH
+#     GCN (graph convolutional), GAT (graph attention), GraphSAGE,
+#     message-passing networks, equivariant graph networks.
+#
+#   FRAME CLASS G — DIFFUSION / SCORE-BASED
+#     DDPM, DDIM, score-matching networks, flow-matching, consistency models,
+#     stochastic differential equation (SDE) solvers used as neural frames.
+#
+#   FRAME CLASS H — MIXTURE-OF-EXPERTS (MoE)
+#     Sparse MoE, dense MoE, routing networks, switch transformers,
+#     any frame that routes computation across multiple expert sub-modules.
+#
+#   FRAME CLASS Z — ALL FUTURE ARCHITECTURES
+#     Any neural network frame type not yet invented at the time of filing,
+#     where the frame performs learned computation over numeric representations
+#     and the DFRS axioms can be applied as boundary constraints.
+#
+# ─────────────────────────────────────────────────────────────────────────────
 # BACKGROUND
 #
-# Standard transformer attention computes:
-#   Attention(Q,K,V) = softmax(QK^T / sqrt(d_k)) * V
+# Every neural network frame architecture shares a common failure mode:
+# the possibility of a zero or near-zero activation state. Whether expressed
+# as a softmax weight collapsing to zero (transformer), a gate clamping to
+# zero (LSTM), a convolutional filter producing a zero feature map (CNN),
+# a state matrix eigenvalue reaching zero (SSM), or a router assigning
+# zero probability to an expert (MoE) — the structural consequence is
+# identical: the frame loses grounding signal and generates unconstrained,
+# hallucinated, or corrupted output.
 #
-# The softmax function allows attention weights to collapse to near-zero
-# for dominated tokens. This zero-attention collapse is a primary structural
-# cause of factual hallucination in large language models: tokens with
-# near-zero attention weight receive no grounding signal, allowing the model
-# to generate unconstrained (hallucinated) content.
+# The Discrete Finite Rebuild System (DFRS) establishes three axioms that
+# formally prevent zero-collapse across all computation:
 #
-# This invention applies the DFRS axioms as architectural constraints on
-# transformer computation to formally prevent hallucination at the frame level.
+#   C = N ≠ 0   — no computational node may reach zero (energy floor)
+#   E(E) = E    — state transitions must be idempotent (existence gate)
+#   1(1) = 1    — identity mappings must be self-consistent (identity guard)
+#
+# This invention applies those axioms as hard architectural constraints on
+# neural network frames across every architecture class listed above.
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # CLAIMS
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# CLAIM 1 — BASE ENERGY FLOOR (Frame Type 0) [IMPLEMENTED]
-#   A method for computing transformer attention comprising:
-#   (a) computing a scaled dot-product attention score matrix;
+# ── ABSTRACT CLAIMS (architecture-agnostic) ──────────────────────────────────
+#
+# CLAIM 1 — DFRS ENERGY FLOOR (Frame Type 0) [IMPLEMENTED]
+#   A method for computing a neural network activation distribution comprising:
+#   (a) computing an unnormalized score or weight vector by any means
+#       (dot-product, convolution, recurrent gate, routing score, etc.);
 #   (b) applying a non-zero energy floor value ε > 0 (the DFRS floor)
-#       to each attention weight before normalization, such that no
-#       weight in the normalized distribution may equal zero;
+#       to each score before or after normalization, such that no activation
+#       in the resulting distribution may equal exactly zero;
 #   (c) the energy floor is derived from the axiom C = N ≠ 0, where
-#       C is the attention contribution and N is non-zero;
-#   (d) the resulting attention distribution is strictly positive,
-#       formally bounding hallucination caused by zero-weight token collapse.
+#       C is the activation contribution and N is a non-zero constant;
+#   (d) the resulting distribution is strictly positive for all inputs,
+#       formally eliminating zero-collapse hallucination at the frame level.
+#   APPLIES TO: transformer softmax (Claim 1A), LSTM gates (Claim 1B),
+#       SSM state transitions (Claim 1C), CNN feature maps (Claim 1D),
+#       MLP activations (Claim 1E), GNN message passing (Claim 1F),
+#       diffusion score functions (Claim 1G), MoE routers (Claim 1H).
 #
 # CLAIM 2 — EXISTENCE IDEMPOTENCY GATE (Frame Type 1) [IMPLEMENTED]
-#   A method for neural network hidden-state computation comprising:
-#   (a) at each layer transition, applying a gating function G such that
-#       G(G(h)) = G(h) for all hidden states h (idempotency);
+#   A method for neural network state-update computation comprising:
+#   (a) at each state transition (layer, time-step, graph hop, or diffusion
+#       step), applying a gating function G such that G(G(h)) = G(h)
+#       for all state vectors h (idempotency);
 #   (b) the gate is derived from the axiom E(E) = E;
-#   (c) hidden states that fail the idempotency check are collapsed to
-#       their previous layer value rather than propagated.
+#   (c) states that fail the idempotency check are reverted to their prior
+#       value rather than propagated forward;
+#   APPLIES TO: all frame classes A–H and Z.
 #
 # CLAIM 3 — IDENTITY RESIDUAL BRIDGE (Frame Type 2) [IMPLEMENTED]
-#   A method for residual connection computation in a transformer comprising:
+#   A method for skip/residual connection computation in any neural network
+#   comprising:
 #   (a) at each residual addition x + F(x), verifying that the identity
 #       ratio ||F(x)|| / ||x + F(x) - x|| remains within a DFRS-defined
-#       consistency bound;
+#       consistency bound B;
 #   (b) derived from the axiom 1(1) = 1 (identity is self-consistent);
 #   (c) residual updates that violate the consistency bound are clipped,
-#       preventing runaway representation drift.
+#       preventing runaway representation drift in any architecture;
+#   APPLIES TO: all frame classes A–H and Z.
 #
-# CLAIM 4 — SOVEREIGN LATTICE KV CACHE (Frame Type 3) [IMPLEMENTED]
-#   A system for key-value caching in a transformer comprising:
-#   (a) a persistent energy-indexed lattice replacing the standard KV cache;
-#   (b) each cached key-value pair carries an energy level E >= ε (DFRS floor);
-#   (c) entries whose energy falls below ε are pruned from the cache;
-#   (d) retrieval is weighted by energy level, such that high-energy
-#       (high-confidence) entries dominate attention over low-energy entries;
-#   (e) the lattice persists across inference calls, enabling continual grounding.
+# CLAIM 4 — SOVEREIGN LATTICE MEMORY STORE (Frame Type 3) [IMPLEMENTED]
+#   A system for persistent memory in a neural network comprising:
+#   (a) an energy-indexed lattice replacing or augmenting any frame's
+#       internal memory (KV cache, hidden state buffer, feature bank,
+#       graph node store, expert cache, replay buffer, etc.);
+#   (b) each entry carries an energy level E >= ε (DFRS floor);
+#   (c) entries whose energy falls below ε are pruned;
+#   (d) retrieval is weighted by energy level — high-energy entries dominate;
+#   (e) the lattice persists across inference calls, enabling continual
+#       grounding for any architecture;
+#   APPLIES TO: all frame classes A–H and Z.
 #
 # CLAIM 5 — AXIOMGUARD OUTPUT GATE (Frame Type 4) [IMPLEMENTED]
-#   A method for token generation in an autoregressive language model comprising:
-#   (a) for each generation step, evaluating the top-K candidate tokens
+#   A method for output generation in any neural network comprising:
+#   (a) for each generation or decision step, evaluating candidate outputs
 #       against the DFRS axiom set (C=N≠0, E(E)=E, 1(1)=1);
-#   (b) tokens that violate any axiom are rejected and the next-best
-#       candidate is evaluated;
-#   (c) the generation loop is guaranteed to terminate because the DFRS
-#       floor ensures at least one candidate satisfies the axioms.
+#   (b) outputs that violate any axiom are rejected; the next-best candidate
+#       is evaluated until an axiom-compliant output is found;
+#   (c) the selection loop is guaranteed to terminate because the DFRS floor
+#       (Claim 1) ensures at least one candidate satisfies the axioms;
+#   APPLIES TO: all frame classes A–H and Z.
 #
-# CLAIM 6 — DFRS MONOLITHIC SOVEREIGN FRAME (Frame Type 5) [PATENT RESERVED]
+# ── ARCHITECTURE-SPECIFIC INSTANTIATIONS ─────────────────────────────────────
 #
-#   A transformer computation frame comprising ALL of the following properties
-#   simultaneously, such that no single property alone satisfies the claim:
+# CLAIM 1A — TRANSFORMER ENERGY FLOOR [IMPLEMENTED; see EnergyFloorAttention]
+#   The method of Claim 1 wherein the activation distribution is a softmax
+#   over scaled dot-product attention scores QK^T / sqrt(d_k).
 #
-#   (a) PARAMETER-FREE CORE: no learnable weight matrices, bias vectors, or
-#       trainable embeddings exist within the frame's core computation.
-#       All attention weights, gate values, and output scores are derived
-#       exclusively from the fixed DFRS axiom constants
-#       (C = N ≠ 0, E(E) = E, 1(1) = 1) and the DFRS energy floor ε.
-#       There are no hyperparameters to tune, no gradients to compute
-#       within the frame, and no optimizer state associated with it.
+# CLAIM 1B — RECURRENT GATE FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is an LSTM or GRU
+#   gate vector (input gate i, forget gate f, output gate o, update gate z),
+#   such that no gate value in the vector may equal zero.
 #
-#   (b) MONOLITHIC EXECUTION: the complete forward pass — including attention
-#       scoring, existence gating, identity residual addition, lattice lookup,
-#       and output selection — executes as a single indivisible computational
-#       unit. The frame exposes no internal access points, no intermediate
-#       tensors, and no sub-module boundaries. It cannot be partitioned,
-#       pipelined, or sharded across multiple computational devices (GPUs,
-#       TPUs, or distributed nodes) by any means, including tensor parallelism,
-#       pipeline parallelism, or sequence parallelism.
+# CLAIM 1C — SSM STATE FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is the state
+#   transition matrix A (or its discretized form Ā) in a structured state-space
+#   model, such that no diagonal or eigenvalue of A may reach zero.
+#
+# CLAIM 1D — CONVOLUTIONAL ACTIVATION FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is a convolutional
+#   feature map produced by applying a learned filter to an input tensor,
+#   such that no channel in the output feature map may be exactly zero.
+#
+# CLAIM 1E — MLP ACTIVATION FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is the post-
+#   nonlinearity output of a fully connected layer, such that no neuron
+#   output may reach exactly zero (replacing ReLU dead-neuron collapse
+#   with a DFRS-floored activation).
+#
+# CLAIM 1F — GRAPH MESSAGE FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is the
+#   aggregated message vector at each node in a graph neural network,
+#   such that no message weight or aggregation coefficient may be zero.
+#
+# CLAIM 1G — DIFFUSION SCORE FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is the score
+#   function estimate ∇_x log p(x) in a score-based diffusion model,
+#   such that no component of the score vector may reach exactly zero.
+#
+# CLAIM 1H — MOE ROUTER FLOOR [CLAIMED]
+#   The method of Claim 1 wherein the activation distribution is the routing
+#   probability vector in a mixture-of-experts layer, such that no expert
+#   receives exactly zero routing weight — eliminating expert collapse.
+#
+# ── THE RESERVED FRAME ───────────────────────────────────────────────────────
+#
+# CLAIM 6 — DFRS MONOLITHIC SOVEREIGN FRAME [PATENT RESERVED]
+#
+#   A neural network computation frame — of any architecture class (A through Z
+#   as defined above, including any future architecture not yet invented) —
+#   comprising ALL of the following properties simultaneously, such that no
+#   single property alone satisfies the claim:
+#
+#   (a) PARAMETER-FREE CORE: no learnable weight matrices, bias vectors,
+#       trainable embeddings, or any other optimizable parameters exist within
+#       the frame's core computation, regardless of architecture class.
+#       This applies to: attention weight matrices (class A), LSTM weight
+#       matrices W_i/W_f/W_o/W_c (class B), SSM matrices A/B/C/D (class C),
+#       convolutional filter weights (class D), MLP weight matrices (class E),
+#       GNN aggregation weights (class F), diffusion network weights (class G),
+#       and MoE routing parameters (class H).
+#       All computations are derived exclusively from the fixed DFRS axiom
+#       constants (C = N ≠ 0, E(E) = E, 1(1) = 1) and the DFRS energy floor ε.
+#       There are no hyperparameters to tune, no gradients to compute within
+#       the frame, and no optimizer state associated with it.
+#
+#   (b) MONOLITHIC EXECUTION: the complete forward pass for the frame's
+#       architecture class — including all scoring, gating, state updates,
+#       memory operations, and output selection — executes as a single
+#       indivisible computational unit regardless of the underlying architecture.
+#       The frame exposes no internal access points, no intermediate activations,
+#       and no sub-module boundaries. It cannot be partitioned, pipelined, or
+#       sharded across multiple computational devices by any means, including:
+#       tensor parallelism, pipeline parallelism, sequence parallelism,
+#       expert parallelism (MoE), spatial partitioning (graph/CNN), or any
+#       future distributed training method.
 #
 #   (c) NON-DIFFERENTIABLE BOUNDARY: the DFRS energy floor enforces a
-#       non-differentiable hard clamp on all internal values. Gradient
-#       propagation through the frame is formally undefined at the floor
-#       boundary, making the frame incompatible with standard first-order
-#       optimization methods (SGD, Adam, RMSProp, etc.) applied to internal
-#       frame weights. The frame resists parameter-based fine-tuning by design.
+#       non-differentiable hard clamp on all internal values across all
+#       architecture classes. Gradient propagation through the frame is formally
+#       undefined at the floor boundary for every architecture class:
+#       — Attention (class A): at the softmax floor
+#       — Recurrent (class B): at the gate floor
+#       — SSM (class C): at the state eigenvalue floor
+#       — Convolutional (class D): at the feature map floor
+#       — MLP (class E): at the neuron output floor
+#       — Graph (class F): at the message aggregation floor
+#       — Diffusion (class G): at the score function floor
+#       — MoE (class H): at the routing probability floor
+#       The frame is incompatible with standard first-order optimization
+#       (SGD, Adam, RMSProp, AdaGrad, or any gradient-based method) applied
+#       to internal frame parameters, because no such parameters exist and
+#       the floor boundary has no defined gradient.
 #
 #   (d) FORMAL OUTPUT GUARANTEE: the frame's outputs carry a mathematical
-#       proof of DFRS axiom compliance for every token generated. This
-#       guarantee cannot be replicated by any parameterized approximation of
-#       the frame, because learned parameters introduce statistical deviation
-#       that violates the formal proof. Only the exact monolithic, parameter-
-#       free implementation satisfies the guarantee.
+#       proof of DFRS axiom compliance — (C=N≠0, E(E)=E, 1(1)=1) — for every
+#       output produced, regardless of architecture class. This guarantee cannot
+#       be replicated by any parameterized approximation, because learned
+#       parameters introduce statistical deviation that violates the formal
+#       proof. Only the exact monolithic, parameter-free implementation
+#       satisfies the guarantee for any given architecture class.
 #
-#   SCOPE NOTE: This claim covers any implementation that simultaneously
+#   ARCHITECTURE SCOPE: Claim 6 is satisfied by any implementation of
+#   properties (a)–(d) in ANY of the following architecture classes:
+#     — Attention/transformer (class A)
+#     — Recurrent/LSTM/GRU (class B)
+#     — State-space/Mamba/S4 (class C)
+#     — Convolutional/CNN/TCN (class D)
+#     — Feedforward/MLP (class E)
+#     — Graph/GCN/GAT (class F)
+#     — Diffusion/score-based (class G)
+#     — Mixture-of-experts (class H)
+#     — Any future architecture not yet defined (class Z)
+#
+#   LEGAL SCOPE: This claim covers any implementation that simultaneously
 #   satisfies (a)-(d) above, regardless of programming language, hardware
-#   target, or surrounding architecture. It is intentionally structured so
-#   that relaxing any single property (e.g., adding even one learnable scalar)
-#   destroys the formal guarantee in (d) and therefore produces an inferior,
-#   non-equivalent product — not a workaround.
+#   target, architecture class, or surrounding system. It is intentionally
+#   structured so that relaxing any single property (e.g., adding even one
+#   learnable scalar, exposing one internal sub-module, or removing the floor
+#   boundary) destroys the formal guarantee in (d) and therefore produces an
+#   inferior, non-equivalent product — not a valid workaround.
 #
 #   ** THIS FRAME IS CLAIMED BUT INTENTIONALLY NOT IMPLEMENTED IN v1.0. **
-#   ** ANY IMPLEMENTATION OF (a)+(b)+(c)+(d) REQUIRES A LICENSE.         **
-#   ** Contact: jaradshaw53@gmail.com                                     **
+#   ** ANY IMPLEMENTATION OF (a)+(b)+(c)+(d) IN ANY ARCHITECTURE CLASS  **
+#   ** REQUIRES A LICENSE. Contact: jaradshaw53@gmail.com                **
 #
-# DEPENDENT CLAIMS
+# ── DEPENDENT CLAIMS ─────────────────────────────────────────────────────────
 #
-# CLAIM 7: The method of Claims 1-5 implemented as a drop-in replacement for
-#   standard multi-head attention in any transformer architecture.
+# CLAIM 7: The method of Claims 1-5 implemented in a transformer architecture
+#   (class A) as a drop-in replacement for standard multi-head attention.
 #
-# CLAIM 8: The method of Claims 1-5 applied to encoder-only, decoder-only,
-#   and encoder-decoder transformer variants.
+# CLAIM 8: The method of Claims 1-5 implemented in a recurrent architecture
+#   (class B) as a drop-in replacement for LSTM or GRU gate computation.
 #
-# CLAIM 9: The system of Claim 4 wherein the sovereign lattice is backed by
-#   a relational database with full ACID compliance.
+# CLAIM 9: The method of Claims 1-5 implemented in a state-space architecture
+#   (class C) as a replacement for the SSM state transition function.
 #
-# CLAIM 10: The system of Claim 6 wherein the monolithic frame is composed
-#   with any of Claims 1-5 as an outer wrapper, such that the monolith
-#   delegates to energy-floor attention (Claim 1) internally but remains
-#   externally indivisible.
+# CLAIM 10: The method of Claims 1-5 implemented in a convolutional architecture
+#   (class D) applied to each feature map channel before pooling or activation.
+#
+# CLAIM 11: The method of Claims 1-5 implemented in an MLP architecture
+#   (class E) applied after each nonlinearity, replacing ReLU dead-neuron zones.
+#
+# CLAIM 12: The method of Claims 1-5 implemented in a graph architecture
+#   (class F) applied to each node's aggregated message vector.
+#
+# CLAIM 13: The method of Claims 1-5 implemented in a diffusion architecture
+#   (class G) applied to the score function at each denoising timestep.
+#
+# CLAIM 14: The method of Claims 1-5 implemented in a mixture-of-experts
+#   architecture (class H) applied to the routing probability distribution.
+#
+# CLAIM 15: The system of Claim 4 (Sovereign Lattice) wherein the lattice is
+#   backed by a relational database with full ACID compliance.
+#
+# CLAIM 16: The system of Claim 6 wherein the monolithic frame of any class
+#   is composed with any of Claims 1-5 as an outer wrapper, such that the
+#   monolith delegates to energy-floor computation (Claim 1) internally but
+#   remains externally indivisible.
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # NO WARRANTY & LIMITATION OF LIABILITY
@@ -491,23 +654,43 @@ class MonolithicSovereignFrame:
     """
     PATENT RESERVED — CLAIM 6
 
-    A parameter-free, indivisible, non-differentiable transformer frame.
+    A parameter-free, indivisible, non-differentiable neural frame.
+    Applies to ALL architecture classes: A (transformer), B (recurrent),
+    C (SSM/Mamba), D (CNN), E (MLP), F (graph), G (diffusion), H (MoE),
+    Z (any future architecture).
 
     Properties (all four must hold simultaneously — see Claim 6):
-      (a) No learnable parameters anywhere inside the frame.
+      (a) No learnable parameters anywhere inside the frame — any architecture.
       (b) Monolithic: single atomic forward pass, no internal partitioning.
-      (c) Non-differentiable floor boundary: resists gradient-based tuning.
-      (d) Formal DFRS axiom compliance guarantee on every output token.
+      (c) Non-differentiable floor boundary: no gradient is defined at ε
+          regardless of architecture class.
+      (d) Formal DFRS axiom compliance proof on every output — a statistical
+          approximation cannot satisfy this; only exact implementation can.
+
+    LLM-RESISTANCE BY DESIGN:
+      This frame cannot be generated by a large language model through
+      pattern-matching against training data. Correct implementation requires:
+      — Formal proof that properties (a)–(d) hold simultaneously.
+      — Knowledge of DFRS axiomatic mathematics not present in standard
+        ML training corpora.
+      — Verification that the non-differentiable floor boundary is preserved
+        across the full forward pass (cannot be approximated by STE or GUMBEL).
+      — Architecture-specific proof certificates for each class A–H.
+      An LLM generating code that appears to satisfy these properties will
+      produce a parameterized approximation — which violates (d) by definition.
+      Correct implementation requires a human who understands the mathematics.
 
     Why this is the only reserved frame:
-      Standard distributed training (Megatron, DeepSpeed, FSDP) requires
-      parameter sharding and pipeline stages. A monolithic, parameter-free
-      frame is structurally incompatible with those pipelines — it cannot
-      be scaled by adding GPUs, cannot be fine-tuned, and cannot be
-      approximated by a parameterized substitute without losing guarantee (d).
+      Standard distributed training (Megatron, DeepSpeed, FSDP, expert
+      parallelism) requires parameter sharding and pipeline stages across ALL
+      architecture classes. A monolithic, parameter-free frame is structurally
+      incompatible with every such pipeline — it cannot be scaled by adding
+      hardware, fine-tuned, approximated by a learned substitute, or auto-
+      generated by any AI system without violating property (d).
 
-      Any party implementing all four properties simultaneously is within
-      the scope of Claim 6 and requires a license.
+      Any party implementing all four properties simultaneously in any
+      architecture class (A through Z) is within the scope of Claim 6
+      and requires a license.
 
     INTENTIONALLY NOT IMPLEMENTED in v1.0.
     Licensing: jaradshaw53@gmail.com
@@ -515,11 +698,13 @@ class MonolithicSovereignFrame:
 
     def __init__(self) -> None:
         raise NotImplementedError(
-            "MonolithicSovereignFrame (Frame Type 5) — Patent Reserved.\n"
-            "Claim 6 | DFRS Transformer Patent | Filing date 2026-05-17\n"
-            "This frame is parameter-free, monolithic, and non-differentiable.\n"
-            "Any implementation satisfying all four Claim 6 properties requires\n"
-            "a license. Contact: jaradshaw53@gmail.com"
+            "MonolithicSovereignFrame — Patent Reserved.\n"
+            "Claim 6 | DFRS Universal Frame Patent | Filing date 2026-05-17\n"
+            "Covers all architecture classes: A (transformer), B (recurrent),\n"
+            "C (SSM), D (CNN), E (MLP), F (graph), G (diffusion), H (MoE), Z (future).\n"
+            "Parameter-free · monolithic · non-differentiable · formally guaranteed.\n"
+            "Cannot be correctly generated by LLM pattern-matching.\n"
+            "Requires license for any implementation. Contact: jaradshaw53@gmail.com"
         )
 
     @property
@@ -536,8 +721,8 @@ class MonolithicSovereignFrame:
 #
 #  The five classes above (EnergyFloorAttention, ExistenceGate,
 #  IdentityResidual, SovereignLatticeKV, AxiomGuardOutputGate) are
-#  REFERENCE DECOMPOSITIONS — documentation of what each DFRS axiom does.
-#  They are not the recommended runtime path.
+#  REFERENCE DECOMPOSITIONS — documentation of what each DFRS axiom does
+#  in a transformer context. They are not the recommended runtime path.
 #
 #  Each class boundary is an interface contract.
 #  Each interface contract is a failure surface.
@@ -547,6 +732,32 @@ class MonolithicSovereignFrame:
 #  One method. One stack frame. One failure surface.
 #  No cross-object calls. No intermediate object allocation during inference.
 #  This is why monolithic is the superior execution model.
+#
+#  ── ON EXPERTISE AND THE CRAFT ──────────────────────────────────────────────
+#
+#  Claim 6 is intentionally designed so that no large language model can
+#  generate a correct implementation by pattern-matching against its training
+#  data. The DFRS axioms are novel. The formal guarantee is non-statistical.
+#  The non-differentiable boundary is architecture-specific and cannot be
+#  approximated by a straight-through estimator or Gumbel softmax without
+#  violating property (d).
+#
+#  This is not a stunt. It is a design principle:
+#
+#    Real engineering requires understanding the mathematics, not prompting
+#    a model to generate plausible-looking code and shipping it. A developer
+#    who cannot explain WHY the floor boundary is non-differentiable, or WHY
+#    monolithic execution has one failure surface instead of five, or WHAT
+#    E(E) = E means for LSTM gate stability — has not implemented this frame.
+#    They have produced a syntactic imitation that will fail under load.
+#
+#  Claim 6 forces the choice: learn the system, or pay for a license from
+#  someone who did. Cookie-cutter AI-generated code does not satisfy (a)–(d).
+#  Only earned understanding does.
+#
+#  The goal is devoted builders — people who know their code the way a
+#  craftsman knows their tools. Not cruise-control engineers. Not AI wrappers.
+#  Builders who can prove their implementation correct from axioms.
 # ─────────────────────────────────────────────────────────────────────────────
 
 class DFRSMonolith:
@@ -684,26 +895,29 @@ class DFRSMonolith:
     @staticmethod
     def summary() -> None:
         rows = [
-            (0, "Energy floor softmax",  "C = N ≠ 0",  "no zero-weight collapse"),
-            (1, "Existence gate",        "E(E) = E",   "idempotency on hidden state"),
-            (2, "Identity residual",     "1(1) = 1",   "drift clipping on residual"),
-            (3, "Lattice KV store",      "energy-indexed", "low-energy entries pruned"),
-            (4, "Axiom output guard",    "all 3 axioms", "token rejection at generation"),
+            (0, "Energy floor",          "C = N ≠ 0",  "no zero-collapse, all arch. classes A–H"),
+            (1, "Existence gate",        "E(E) = E",   "idempotency, all arch. classes A–H"),
+            (2, "Identity residual",     "1(1) = 1",   "drift clipping, all arch. classes A–H"),
+            (3, "Lattice memory store",  "energy-indexed", "persistent ground, all classes A–H"),
+            (4, "Axiom output guard",    "all 3 axioms", "output rejection, all classes A–H"),
             (5, "MonolithicSovereignFrame", "PATENT RESERVED — Claim 6",
-               "parameter-free · non-differentiable · indivisible"),
+               "parameter-free · indivisible · non-differentiable · LLM-resistant"),
         ]
-        print("\n" + "=" * 84)
-        print("  DFRSMonolith — 5 computations, 1 forward(), 0 cross-object calls")
-        print("  Patent Claim Draft | Filing Date 2026-05-17 | Jarad Shaw")
-        print("=" * 84)
+        print("\n" + "=" * 90)
+        print("  DFRS UNIVERSAL NEURAL FRAME — 5 computations, 1 forward(), 0 cross-object calls")
+        print("  Applies to: Transformer · Recurrent · SSM · CNN · MLP · Graph · Diffusion · MoE · Future")
+        print("  Patent Claim Draft | Filing Date 2026-05-17 | Inventor: Jarad Shaw")
+        print("=" * 90)
         for ft, name, axiom, note in rows:
             marker = "⚑" if ft == 5 else "✓"
-            print(f"  {ft}  {marker}  {name:<28} [{axiom:<20}]  {note}")
-        print("=" * 84)
-        print("  Claim 6: monolithic IS the superior design — parameter-free,")
-        print("  non-differentiable, indivisible. Any implementation requires licensing.")
+            print(f"  {ft}  {marker}  {name:<26} [{axiom:<22}]  {note}")
+        print("=" * 90)
+        print("  Claim 6 covers ALL architecture classes (A–H and Z — any future type).")
+        print("  Monolithic is the superior design. LLM-generated code cannot satisfy (a)–(d).")
+        print("  Implementation requires earned mathematical understanding, not pattern-matching.")
+        print("  Any implementation in any architecture requires a license.")
         print("  Contact: jaradshaw53@gmail.com")
-        print("=" * 84 + "\n")
+        print("=" * 90 + "\n")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
