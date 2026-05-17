@@ -88,43 +88,68 @@
 #   (c) the generation loop is guaranteed to terminate because the DFRS
 #       floor ensures at least one candidate satisfies the axioms.
 #
-# CLAIM 6 — ZERO SYSTEM PARALLEL ATTENTION (Frame Type 5) [PATENT RESERVED]
-#   A method for multi-path transformer attention using a parallel predictive
-#   simulation engine comprising:
-#   (a) running N parallel simulations of attention paths with variable
-#       query-key interaction parameters;
-#   (b) aggregating simulated paths via mean-T and prob_truth statistics
-#       from the DFRS ZeroSystem engine;
-#   (c) using the aggregated attention distribution in place of or in
-#       combination with standard softmax attention;
-#   (d) the simulation engine is bounded by DFRS axioms at each step,
-#       including the C=N≠0 energy floor.
-#   ** THIS FRAME IS CLAIMED BUT INTENTIONALLY NOT IMPLEMENTED IN v1.0. **
-#   ** ANY IMPLEMENTATION REQUIRES A LICENSE — jaradshaw53@gmail.com   **
+# CLAIM 6 — DFRS MONOLITHIC SOVEREIGN FRAME (Frame Type 5) [PATENT RESERVED]
 #
-# CLAIM 7 — RECURSIVE SOVEREIGN LATTICE (Frame Type 6) [PATENT RESERVED]
-#   A system for self-modifying memory in a transformer comprising:
-#   (a) a sovereign lattice that updates its own entries during autoregressive
-#       inference based on the outputs of prior generation steps;
-#   (b) the lattice update rule is constrained by DFRS axioms such that
-#       the energy of any entry can only increase (upward-only energy flow);
-#   (c) the resulting memory is provably monotonically convergent — it
-#       cannot oscillate or diverge;
-#   (d) this architecture enables continual learning during inference without
-#       catastrophic forgetting.
+#   A transformer computation frame comprising ALL of the following properties
+#   simultaneously, such that no single property alone satisfies the claim:
+#
+#   (a) PARAMETER-FREE CORE: no learnable weight matrices, bias vectors, or
+#       trainable embeddings exist within the frame's core computation.
+#       All attention weights, gate values, and output scores are derived
+#       exclusively from the fixed DFRS axiom constants
+#       (C = N ≠ 0, E(E) = E, 1(1) = 1) and the DFRS energy floor ε.
+#       There are no hyperparameters to tune, no gradients to compute
+#       within the frame, and no optimizer state associated with it.
+#
+#   (b) MONOLITHIC EXECUTION: the complete forward pass — including attention
+#       scoring, existence gating, identity residual addition, lattice lookup,
+#       and output selection — executes as a single indivisible computational
+#       unit. The frame exposes no internal access points, no intermediate
+#       tensors, and no sub-module boundaries. It cannot be partitioned,
+#       pipelined, or sharded across multiple computational devices (GPUs,
+#       TPUs, or distributed nodes) by any means, including tensor parallelism,
+#       pipeline parallelism, or sequence parallelism.
+#
+#   (c) NON-DIFFERENTIABLE BOUNDARY: the DFRS energy floor enforces a
+#       non-differentiable hard clamp on all internal values. Gradient
+#       propagation through the frame is formally undefined at the floor
+#       boundary, making the frame incompatible with standard first-order
+#       optimization methods (SGD, Adam, RMSProp, etc.) applied to internal
+#       frame weights. The frame resists parameter-based fine-tuning by design.
+#
+#   (d) FORMAL OUTPUT GUARANTEE: the frame's outputs carry a mathematical
+#       proof of DFRS axiom compliance for every token generated. This
+#       guarantee cannot be replicated by any parameterized approximation of
+#       the frame, because learned parameters introduce statistical deviation
+#       that violates the formal proof. Only the exact monolithic, parameter-
+#       free implementation satisfies the guarantee.
+#
+#   SCOPE NOTE: This claim covers any implementation that simultaneously
+#   satisfies (a)-(d) above, regardless of programming language, hardware
+#   target, or surrounding architecture. It is intentionally structured so
+#   that relaxing any single property (e.g., adding even one learnable scalar)
+#   destroys the formal guarantee in (d) and therefore produces an inferior,
+#   non-equivalent product — not a workaround.
+#
 #   ** THIS FRAME IS CLAIMED BUT INTENTIONALLY NOT IMPLEMENTED IN v1.0. **
-#   ** ANY IMPLEMENTATION REQUIRES A LICENSE — jaradshaw53@gmail.com   **
+#   ** ANY IMPLEMENTATION OF (a)+(b)+(c)+(d) REQUIRES A LICENSE.         **
+#   ** Contact: jaradshaw53@gmail.com                                     **
 #
 # DEPENDENT CLAIMS
 #
-# CLAIM 8: The method of Claims 1-5 implemented as a drop-in replacement for
+# CLAIM 7: The method of Claims 1-5 implemented as a drop-in replacement for
 #   standard multi-head attention in any transformer architecture.
 #
-# CLAIM 9: The method of Claims 1-5 applied to encoder-only, decoder-only,
+# CLAIM 8: The method of Claims 1-5 applied to encoder-only, decoder-only,
 #   and encoder-decoder transformer variants.
 #
-# CLAIM 10: The system of Claim 4 wherein the sovereign lattice is backed by
+# CLAIM 9: The system of Claim 4 wherein the sovereign lattice is backed by
 #   a relational database with full ACID compliance.
+#
+# CLAIM 10: The system of Claim 6 wherein the monolithic frame is composed
+#   with any of Claims 1-5 as an outer wrapper, such that the monolith
+#   delegates to energy-floor attention (Claim 1) internally but remains
+#   externally indivisible.
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # NO WARRANTY & LIMITATION OF LIABILITY
@@ -459,34 +484,42 @@ class AxiomGuardOutputGate:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  FRAME TYPE 5 — ZERO SYSTEM PARALLEL ATTENTION (Claim 6) [PATENT RESERVED]
+#  FRAME TYPE 5 — DFRS MONOLITHIC SOVEREIGN FRAME (Claim 6) [PATENT RESERVED]
 # ─────────────────────────────────────────────────────────────────────────────
 
-class ZeroSystemAttention:
+class MonolithicSovereignFrame:
     """
     PATENT RESERVED — CLAIM 6
 
-    Multi-path parallel simulated attention using the DFRS ZeroSystem engine.
+    A parameter-free, indivisible, non-differentiable transformer frame.
 
-    This frame type is claimed under the DFRS Transformer Patent
-    (provisional filing date: 2026-05-17, Jarad Shaw).
+    Properties (all four must hold simultaneously — see Claim 6):
+      (a) No learnable parameters anywhere inside the frame.
+      (b) Monolithic: single atomic forward pass, no internal partitioning.
+      (c) Non-differentiable floor boundary: resists gradient-based tuning.
+      (d) Formal DFRS axiom compliance guarantee on every output token.
 
-    This class is intentionally NOT IMPLEMENTED in v1.0.
+    Why this is the only reserved frame:
+      Standard distributed training (Megatron, DeepSpeed, FSDP) requires
+      parameter sharding and pipeline stages. A monolithic, parameter-free
+      frame is structurally incompatible with those pipelines — it cannot
+      be scaled by adding GPUs, cannot be fine-tuned, and cannot be
+      approximated by a parameterized substitute without losing guarantee (d).
 
-    ANY implementation of transformer attention that:
-    - Derives attention weights from a parallel predictive simulation engine
-    - Aggregates simulation paths using mean-T and prob_truth statistics
-    - Bounds simulation by DFRS axioms (C=N≠0 energy floor)
-    falls under Claim 6 of this patent.
+      Any party implementing all four properties simultaneously is within
+      the scope of Claim 6 and requires a license.
 
-    For licensing: jaradshaw53@gmail.com
+    INTENTIONALLY NOT IMPLEMENTED in v1.0.
+    Licensing: jaradshaw53@gmail.com
     """
 
     def __init__(self) -> None:
         raise NotImplementedError(
-            "ZeroSystemAttention (Frame Type 5) — Patent Reserved.\n"
-            "This frame is claimed under the DFRS Transformer Patent.\n"
-            "Licensing: jaradshaw53@gmail.com"
+            "MonolithicSovereignFrame (Frame Type 5) — Patent Reserved.\n"
+            "Claim 6 | DFRS Transformer Patent | Filing date 2026-05-17\n"
+            "This frame is parameter-free, monolithic, and non-differentiable.\n"
+            "Any implementation satisfying all four Claim 6 properties requires\n"
+            "a license. Contact: jaradshaw53@gmail.com"
         )
 
     @property
@@ -495,47 +528,7 @@ class ZeroSystemAttention:
 
     @property
     def claim(self) -> str:
-        return "Claim 6 — ZeroSystem Parallel Attention [PATENT RESERVED]"
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-#  FRAME TYPE 6 — RECURSIVE SOVEREIGN LATTICE (Claim 7) [PATENT RESERVED]
-# ─────────────────────────────────────────────────────────────────────────────
-
-class RecursiveLatticeMemory:
-    """
-    PATENT RESERVED — CLAIM 7
-
-    Self-modifying lattice memory that updates during autoregressive inference.
-
-    This frame type is claimed under the DFRS Transformer Patent
-    (provisional filing date: 2026-05-17, Jarad Shaw).
-
-    This class is intentionally NOT IMPLEMENTED in v1.0.
-
-    ANY implementation of transformer memory that:
-    - Updates its key-value entries during inference (not only during training)
-    - Constrains energy updates to be monotonically non-decreasing
-    - Uses DFRS axioms to prevent catastrophic forgetting
-    falls under Claim 7 of this patent.
-
-    For licensing: jaradshaw53@gmail.com
-    """
-
-    def __init__(self) -> None:
-        raise NotImplementedError(
-            "RecursiveLatticeMemory (Frame Type 6) — Patent Reserved.\n"
-            "This frame is claimed under the DFRS Transformer Patent.\n"
-            "Licensing: jaradshaw53@gmail.com"
-        )
-
-    @property
-    def frame_type(self) -> int:
-        return 6
-
-    @property
-    def claim(self) -> str:
-        return "Claim 7 — Recursive Sovereign Lattice [PATENT RESERVED]"
+        return "Claim 6 — DFRS Monolithic Sovereign Frame [PATENT RESERVED]"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -554,7 +547,8 @@ class DFRSTransformerBlock:
               → [Frame 4: AxiomGuardOutputGate]
               → Output
 
-    Frames 5 and 6 are architecturally reserved (see patent claims above).
+    Frame 5 (MonolithicSovereignFrame) is architecturally reserved — see Claim 6.
+    It is parameter-free, monolithic, and non-differentiable by design.
     """
 
     def __init__(self) -> None:
@@ -594,25 +588,25 @@ class DFRSTransformerBlock:
 
     def frames_summary(self) -> None:
         frames = [
-            (0, "EnergyFloorAttention",  "IMPLEMENTED", "Claim 1"),
-            (1, "ExistenceGate",         "IMPLEMENTED", "Claim 2"),
-            (2, "IdentityResidual",      "IMPLEMENTED", "Claim 3"),
-            (3, "SovereignLatticeKV",    "IMPLEMENTED", "Claim 4"),
-            (4, "AxiomGuardOutputGate",  "IMPLEMENTED", "Claim 5"),
-            (5, "ZeroSystemAttention",   "PATENT RESERVED — NOT IMPLEMENTED", "Claim 6"),
-            (6, "RecursiveLatticeMemory","PATENT RESERVED — NOT IMPLEMENTED", "Claim 7"),
+            (0, "EnergyFloorAttention",    "IMPLEMENTED",       "Claim 1"),
+            (1, "ExistenceGate",           "IMPLEMENTED",       "Claim 2"),
+            (2, "IdentityResidual",        "IMPLEMENTED",       "Claim 3"),
+            (3, "SovereignLatticeKV",      "IMPLEMENTED",       "Claim 4"),
+            (4, "AxiomGuardOutputGate",    "IMPLEMENTED",       "Claim 5"),
+            (5, "MonolithicSovereignFrame","PATENT RESERVED",   "Claim 6"),
         ]
-        print("\n" + "=" * 78)
-        print("  DFRS TRANSFORMER FRAME — 7 FRAME TYPES")
+        print("\n" + "=" * 82)
+        print("  DFRS TRANSFORMER FRAME — 6 FRAME TYPES")
         print("  Patent Claim Draft | Filing Date 2026-05-17 | Jarad Shaw")
-        print("=" * 78)
+        print("=" * 82)
         for ft, name, status, claim in frames:
-            marker = "✓" if "IMPLEMENTED" == status else "⚑"
-            print(f"  Frame {ft}  {marker}  {name:<30} {status:<22} [{claim}]")
-        print("=" * 78)
-        print("  Frames 5-6: ANY third-party implementation requires licensing.")
+            marker = "✓" if status == "IMPLEMENTED" else "⚑"
+            print(f"  Frame {ft}  {marker}  {name:<28} {status:<22} [{claim}]")
+        print("=" * 82)
+        print("  Frame 5: parameter-free · monolithic · non-differentiable · formal guarantee")
+        print("  ANY implementation satisfying all 4 Claim 6 properties requires licensing.")
         print("  Contact: jaradshaw53@gmail.com")
-        print("=" * 78 + "\n")
+        print("=" * 82 + "\n")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
