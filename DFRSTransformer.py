@@ -532,81 +532,178 @@ class MonolithicSovereignFrame:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  DFRS TRANSFORMER — COMPLETE 5-FRAME ASSEMBLY
+#  NOTE ON DESIGN PHILOSOPHY
+#
+#  The five classes above (EnergyFloorAttention, ExistenceGate,
+#  IdentityResidual, SovereignLatticeKV, AxiomGuardOutputGate) are
+#  REFERENCE DECOMPOSITIONS — documentation of what each DFRS axiom does.
+#  They are not the recommended runtime path.
+#
+#  Each class boundary is an interface contract.
+#  Each interface contract is a failure surface.
+#  Five classes in sequence = five failure surfaces with no shared context.
+#
+#  DFRSMonolith below collapses all five into a single forward() method.
+#  One method. One stack frame. One failure surface.
+#  No cross-object calls. No intermediate object allocation during inference.
+#  This is why monolithic is the superior execution model.
 # ─────────────────────────────────────────────────────────────────────────────
 
-class DFRSTransformerBlock:
+class DFRSMonolith:
     """
-    A single DFRS transformer block using all 5 implemented frames.
+    The correct DFRS transformer implementation.
 
-    Architecture:
-        Input → [Frame 0: EnergyFloorAttention]
-              → [Frame 1: ExistenceGate]
-              → [Frame 2: IdentityResidual]
-              → [Frame 3: SovereignLatticeKV]
-              → [Frame 4: AxiomGuardOutputGate]
-              → Output
+    All five frame computations are inlined into a single forward() method.
+    No sub-class instances are called during inference — there are no internal
+    interface boundaries to fail across.
 
-    Frame 5 (MonolithicSovereignFrame) is architecturally reserved — see Claim 6.
-    It is parameter-free, monolithic, and non-differentiable by design.
+    One method. One stack frame. One failure surface.
+
+    This is the execution model that Claim 6 (MonolithicSovereignFrame)
+    describes as the superior architecture — not merely a patent trap, but
+    the right way to build it.
     """
 
-    def __init__(self) -> None:
-        self.attention  = EnergyFloorAttention()
-        self.exist_gate = ExistenceGate()
-        self.residual   = IdentityResidual()
-        self.kv_cache   = SovereignLatticeKV()
-        self.output_gate = AxiomGuardOutputGate()
+    # Axiom guard reject signals (inlined — no separate class lookup)
+    _REJECT = (
+        "zero", "null", "none", "undefined", "nan", "inf",
+        "impossible", "cannot exist", "does not exist", "never was",
+        "is and is not", "both true and false", "simultaneously",
+    )
+
+    def __init__(self, max_lattice: int = 2048) -> None:
+        self._lattice:     Dict[str, Tuple]    = {}   # key → (value, energy, ts)
+        self._max_lattice: int                 = max_lattice
+        self._prev_hidden: Optional[List[float]] = None
+        self._gate_passed  = 0
+        self._gate_rejected = 0
 
     def forward(
         self,
-        Q: List[List[float]],
-        K: List[List[float]],
-        V: List[List[float]],
-        input_hidden: List[float],
-    ) -> Tuple[List[List[float]], Dict]:
-        # Frame 0: energy-floor attention
-        attn_out, attn_weights = self.attention.forward(Q, K, V)
+        Q:          List[List[float]],
+        K:          List[List[float]],
+        V:          List[List[float]],
+        hidden:     List[float],
+        candidates: Optional[List[Tuple[str, float]]] = None,
+    ) -> Tuple[List[List[float]], List[List[float]], Optional[Tuple[str, float]], Dict]:
+        """
+        Single-pass DFRS forward computation.
 
-        # Frame 1: existence gate on output hidden state
-        hidden = attn_out[0] if attn_out else input_hidden
-        gated  = self.exist_gate.gate(hidden)
+        Args:
+            Q, K, V   : query / key / value matrices [seq_len × d_k]
+            hidden    : input hidden state [d_k]
+            candidates: optional list of (token, probability) for axiom gating
 
-        # Frame 2: identity residual
-        output = self.residual.add(input_hidden, gated)
+        Returns:
+            (attn_output, attn_weights, best_token_or_None, meta)
+        """
+        d_k     = len(Q[0])
+        scale   = math.sqrt(d_k)
+        seq_len = len(Q)
 
-        # Frame 3: store in sovereign lattice
-        key = hashlib.sha256(str(input_hidden[:3]).encode()).hexdigest()[:8]
-        self.kv_cache.store(key, output, energy=max(attn_weights[0]) if attn_weights else 1.0)
+        # ── 1. DFRS softmax — C = N ≠ 0 (energy floor, no zeroed weights) ──
+        attn_weights: List[List[float]] = []
+        for i in range(seq_len):
+            scores = [
+                sum(Q[i][d] * K[j][d] for d in range(d_k)) / scale
+                for j in range(seq_len)
+            ]
+            max_s  = max(scores)
+            e      = [max(math.exp(s - max_s), DFRS_ENERGY_FLOOR) for s in scores]
+            total  = sum(e)
+            attn_weights.append([v / total for v in e])
 
-        meta = {
-            "attention_weights": attn_weights,
-            "kv_stats":          self.kv_cache.stats(),
-            "gate_stats":        self.output_gate.stats(),
-        }
-        return attn_out, meta
-
-    def frames_summary(self) -> None:
-        frames = [
-            (0, "EnergyFloorAttention",    "IMPLEMENTED",       "Claim 1"),
-            (1, "ExistenceGate",           "IMPLEMENTED",       "Claim 2"),
-            (2, "IdentityResidual",        "IMPLEMENTED",       "Claim 3"),
-            (3, "SovereignLatticeKV",      "IMPLEMENTED",       "Claim 4"),
-            (4, "AxiomGuardOutputGate",    "IMPLEMENTED",       "Claim 5"),
-            (5, "MonolithicSovereignFrame","PATENT RESERVED",   "Claim 6"),
+        attn_out: List[List[float]] = [
+            [sum(attn_weights[i][j] * V[j][d] for j in range(seq_len))
+             for d in range(len(V[0]))]
+            for i in range(seq_len)
         ]
-        print("\n" + "=" * 82)
-        print("  DFRS TRANSFORMER FRAME — 6 FRAME TYPES")
+
+        # ── 2. Existence gate — E(E) = E (idempotency check, inline) ────────
+        h  = attn_out[0] if attn_out else hidden
+        g1 = [
+            1.0 / (1.0 + math.exp(-v)) if abs(v) < 500 else (1.0 if v > 0 else 0.0)
+            for v in h
+        ]
+        g2 = [
+            1.0 / (1.0 + math.exp(-v)) if abs(v) < 500 else (1.0 if v > 0 else 0.0)
+            for v in g1
+        ]
+        diff_norm = math.sqrt(sum((a - b) ** 2 for a, b in zip(g1, g2)))
+        if self._prev_hidden is not None and diff_norm > 0.05:
+            gated = self._prev_hidden[:]      # idempotency violated — revert
+        else:
+            gated = g1
+        self._prev_hidden = gated[:]
+
+        # ── 3. Identity residual — 1(1) = 1 (no runaway drift, inline) ──────
+        norm_fx   = math.sqrt(sum(v ** 2 for v in gated)) + DFRS_ENERGY_FLOOR
+        res       = [xi + gi for xi, gi in zip(hidden, gated)]
+        diff      = [r - xi for r, xi in zip(res, hidden)]
+        norm_diff = math.sqrt(sum(v ** 2 for v in diff)) + DFRS_ENERGY_FLOOR
+        ratio     = norm_diff / norm_fx
+        if ratio > DFRS_ID_BOUND:
+            clip  = DFRS_ID_BOUND / ratio
+            gated = [v * clip for v in gated]
+            res   = [xi + gi for xi, gi in zip(hidden, gated)]
+
+        # ── 4. Sovereign lattice store — energy-indexed KV (inline) ─────────
+        peak_energy = max(attn_weights[0]) if attn_weights else 1.0
+        lkey        = hashlib.sha256(str(hidden[:3]).encode()).hexdigest()[:8]
+        self._lattice[lkey] = (res, max(peak_energy, DFRS_ENERGY_FLOOR), time.time())
+        if len(self._lattice) > self._max_lattice:
+            evict = min(self._lattice,
+                        key=lambda k: (self._lattice[k][1], self._lattice[k][2]))
+            del self._lattice[evict]
+
+        # ── 5. Axiom guard — reject tokens that violate DFRS axioms (inline) ─
+        best: Optional[Tuple[str, float]] = None
+        if candidates:
+            for tok, prob in sorted(candidates, key=lambda c: -c[1]):
+                if not any(sig in tok.lower() for sig in self._REJECT):
+                    best = (tok, prob)
+                    self._gate_passed += 1
+                    break
+            if best is None:
+                best = max(candidates, key=lambda c: c[1])
+                self._gate_rejected += len(candidates)
+
+        lattice_energies = [e for _, e, _ in self._lattice.values()]
+        meta = {
+            "attn_min_weight": min(attn_weights[0]) if attn_weights else 0.0,
+            "existence_reverted": diff_norm > 0.05,
+            "identity_clipped":   ratio > DFRS_ID_BOUND,
+            "lattice_entries":    len(self._lattice),
+            "lattice_mean_energy": (sum(lattice_energies) / len(lattice_energies)
+                                    if lattice_energies else 0.0),
+            "gate_pass_rate":     (self._gate_passed /
+                                   max(1, self._gate_passed + self._gate_rejected)),
+        }
+        return attn_out, attn_weights, best, meta
+
+    @staticmethod
+    def summary() -> None:
+        rows = [
+            (0, "Energy floor softmax",  "C = N ≠ 0",  "no zero-weight collapse"),
+            (1, "Existence gate",        "E(E) = E",   "idempotency on hidden state"),
+            (2, "Identity residual",     "1(1) = 1",   "drift clipping on residual"),
+            (3, "Lattice KV store",      "energy-indexed", "low-energy entries pruned"),
+            (4, "Axiom output guard",    "all 3 axioms", "token rejection at generation"),
+            (5, "MonolithicSovereignFrame", "PATENT RESERVED — Claim 6",
+               "parameter-free · non-differentiable · indivisible"),
+        ]
+        print("\n" + "=" * 84)
+        print("  DFRSMonolith — 5 computations, 1 forward(), 0 cross-object calls")
         print("  Patent Claim Draft | Filing Date 2026-05-17 | Jarad Shaw")
-        print("=" * 82)
-        for ft, name, status, claim in frames:
-            marker = "✓" if status == "IMPLEMENTED" else "⚑"
-            print(f"  Frame {ft}  {marker}  {name:<28} {status:<22} [{claim}]")
-        print("=" * 82)
-        print("  Frame 5: parameter-free · monolithic · non-differentiable · formal guarantee")
-        print("  ANY implementation satisfying all 4 Claim 6 properties requires licensing.")
+        print("=" * 84)
+        for ft, name, axiom, note in rows:
+            marker = "⚑" if ft == 5 else "✓"
+            print(f"  {ft}  {marker}  {name:<28} [{axiom:<20}]  {note}")
+        print("=" * 84)
+        print("  Claim 6: monolithic IS the superior design — parameter-free,")
+        print("  non-differentiable, indivisible. Any implementation requires licensing.")
         print("  Contact: jaradshaw53@gmail.com")
-        print("=" * 82 + "\n")
+        print("=" * 84 + "\n")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -614,35 +711,32 @@ class DFRSTransformerBlock:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _demo() -> None:
-    block = DFRSTransformerBlock()
-    block.frames_summary()
+    m = DFRSMonolith()
+    DFRSMonolith.summary()
 
-    # Minimal 3-token sequence, d_k=4
     Q = [[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8], [0.9, 0.1, 0.2, 0.3]]
     K = [[0.4, 0.3, 0.2, 0.1], [0.8, 0.7, 0.6, 0.5], [0.3, 0.2, 0.1, 0.9]]
     V = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]]
     h = [0.5, 0.5, 0.5, 0.5]
 
-    out, meta = block.forward(Q, K, V, h)
+    candidates = [
+        ("the",       0.45),
+        ("zero",      0.25),    # rejected — axiom violation
+        ("result",    0.20),
+        ("undefined", 0.10),    # rejected — axiom violation
+    ]
 
-    print("Attention weights (Frame 0 — energy floor guaranteed non-zero):")
-    for i, row in enumerate(meta["attention_weights"]):
+    out, weights, best, meta = m.forward(Q, K, V, h, candidates)
+
+    print("Attention weights (floor guaranteed — no weight reaches zero):")
+    for i, row in enumerate(weights):
         vals = "  ".join(f"{w:.4f}" for w in row)
         print(f"  token {i}: [{vals}]  min={min(row):.2e}")
 
-    print(f"\nKV cache after 1 pass: {meta['kv_stats']}")
-
-    # Token candidate gating (Frame 4)
-    gate = block.output_gate
-    candidates = [
-        TokenCandidate("the",        12.3, 0.45),
-        TokenCandidate("zero",        8.1, 0.25),   # should be rejected
-        TokenCandidate("result",      7.9, 0.20),
-        TokenCandidate("undefined",   6.2, 0.10),   # should be rejected
-    ]
-    best = gate.gate(candidates)
-    print(f"\nAxiomGuard gate selected: '{best.token}' (prob={best.probability:.2f})")
-    print(f"Gate stats: {gate.stats()}")
+    print(f"\nBest token (axiom guard): '{best[0]}' (prob={best[1]:.2f})")
+    print(f"\nForward pass meta:")
+    for k, v in meta.items():
+        print(f"  {k}: {v}")
 
 
 if __name__ == "__main__":
